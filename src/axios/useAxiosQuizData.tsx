@@ -27,12 +27,15 @@ export function useAxiosQuizData() {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const url = `https://quizapi.io/api/v1/questions?apiKey=NZcUX62tqCNU0vTgmhG5rN0dr7RYLdWZVfK6ROiS&limit=10`;
-                // const url = `${API_URL}?difficulty=${state.user.difficulty}`;
+                // const url = `https://quizapi.io/api/v1/questions?apiKey=NZcUX62tqCNU0vTgmhG5rN0dr7RYLdWZVfK6ROiS&limit=10`;
+                const url = `${API_URL}&difficulty=${state.user.difficulty}`;
                 const response = await axios.get(url);
                 if (response.status !== 200) {
                     throw new Error('Error fetching data');
                 }
+
+                console.log("response====", response)
+
                 const questionss = response?.data.map((item: any) => ({
                     id: item.id,
                     question: item.question,

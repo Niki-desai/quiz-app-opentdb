@@ -28,8 +28,8 @@ const Home = () => {
         <div className="flex flex-col md:flex-row flex-grow bg-gradient-to-r from-pink-500 via-purple-400 to-black-400 min-h-screen">
             {/* Left Side */}
             <div className="flex-1 flex flex-col justify-center items-center text-center p-8">
-                <h1 className="text-4xl font-bold text-white mb-6">
-                    <span className='text-blue-900 text-7xl '>Welcome 😃,</span>
+                <h1 className="text-3xl font-bold text-white mb-6">
+                    <span className='text-blue-900 text-6xl hover:text-7xl cursor-pointer '>Welcome 😃,</span>
                     <p className='mt-5 mb-8'> to the Ultimate Quiz Challenge!</p>
                 </h1>
                 <div className="bg-blue-900 border border-purple-700 rounded-lg p-10 shadow-2xl">
