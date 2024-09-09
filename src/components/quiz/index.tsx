@@ -5,19 +5,19 @@ import { useNavigate } from 'react-router-dom';
 import Loading from './Loading';
 
 
-export type AnswerOptions = {
-  answer_a: string | null;
-  answer_b: string | null;
-  answer_c: string | null;
-  answer_d?: string | null;
-  answer_e?: string | null;
-  answer_f?: string | null;
-};
+// export type AnswerOptions = {
+//   answer_a: string | null;
+//   answer_b: string | null;
+//   answer_c: string | null;
+//   answer_d?: string | null;
+//   answer_e?: string | null;
+//   answer_f?: string | null;
+// };
 
 type Question = {
   id: number;
   question: string;
-  answers: AnswerOptions[];
+  answers: any[];
   correct_answer: string;
 };
 
@@ -36,6 +36,9 @@ const Quiz = () => {
   const { data, error, loading } = useAxiosQuizData();
   // const API_URL = process.env.REACT_APP_API_URL;
   const currentQuestion = data?.[currentQuestionIndex];
+  console.log("data", data)
+
+
   const navigate = useNavigate();
   if (loading) return <Loading />;
   if (error) return <p>{error}</p>;
@@ -100,12 +103,12 @@ const Quiz = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-pink-100 p-6">
-   
+
       <div className="flex items-center justify-between w-full max-w-lg mb-4">
         <p className="text-purple-500 text-2xl font-semibold italic">
           Your Current Score !!🫡
         </p>
-        <button  className="bg-green-500 text-white text-2xl font-xl font-bold py-2 px-8 rounded-lg shadow-lg hover:bg-green-700 transition-colors">
+        <button className="bg-green-500 text-white text-2xl font-xl font-bold py-2 px-8 rounded-lg shadow-lg hover:bg-green-700 transition-colors">
           {state.quizScore}
         </button>
       </div>
@@ -124,7 +127,7 @@ const Quiz = () => {
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">{currentQuestion?.question}</h2>
           <ul className="space-y-2">
-            {Object.keys(currentQuestion?.answers[0] || {}).map((key) => {
+            {/* {Object.keys(currentQuestion?.answers[0] || {}).map((key) => {
               const answerKey = key as keyof AnswerOptions;
               const answer = currentQuestion?.answers[0][answerKey];
               let answerClass = 'p-4 rounded-lg cursor-pointer transition-colors shadow-md hover:bg-purple-50';
@@ -153,12 +156,39 @@ const Quiz = () => {
                   </li>
                 )
               );
+            })} */}
+            {currentQuestion?.answers.map((answer, index) => {
+              let answerClass = 'p-4 rounded-lg cursor-pointer transition-colors shadow-md hover:bg-purple-50';
+
+              if (hasSubmitted) {
+                if (answer === currentQuestion?.correct_answer) {
+                  answerClass += ' bg-green-200 border-2 border-green-600 text-green-800'; // Correct answer in green
+                }
+
+                if (answer === selectedAnswer && answer !== currentQuestion?.correct_answer) {
+                  answerClass += ' bg-red-200 border-2 border-red-600 text-red-800'; // Incorrect answer in red
+                }
+              } else if (answer === selectedAnswer) {
+                answerClass += ' bg-purple-200 border-2 border-purple-600 text-purple-800'; // Selected answer before submission
+              } else {
+                answerClass += ' bg-white hover:bg-purple-50'; // Default state
+              }
+              return (
+                <li
+                  key={index}
+                  onClick={() => handleAnswerClick(answer)}
+                  className={answerClass}
+                >
+                  {answer}
+                </li>
+              );
             })}
           </ul>
+
         </div>
         <div className="text-center mb-6">
           {feedback && (
-            <p className={`text-lg font-semibold ${feedback.startsWith('Wrong') || feedback.startsWith('There') ? 'text-red-600' : feedback.startsWith('Answer') ? 'text-green-600': 'text-purple-600'}`}>
+            <p className={`text-lg font-semibold ${feedback.startsWith('Wrong') || feedback.startsWith('There') ? 'text-red-600' : feedback.startsWith('Answer') ? 'text-green-600' : 'text-purple-600'}`}>
               {feedback}
             </p>
           )}
@@ -169,7 +199,7 @@ const Quiz = () => {
           disabled={!selectedAnswer && !hasSubmitted}
           className={`bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-purple-700 transition-colors ${(!selectedAnswer && !hasSubmitted) ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          {(currentQuestionIndex < data.length - 1 && hasSubmitted) ? 'Next' : (currentQuestionIndex == data.length - 1 && hasSubmitted)  ? 'View Result' : 'Submit'}
+          {(currentQuestionIndex < data.length - 1 && hasSubmitted) ? 'Next' : (currentQuestionIndex == data.length - 1 && hasSubmitted) ? 'View Result' : 'Submit'}
         </button>
 
       </div>

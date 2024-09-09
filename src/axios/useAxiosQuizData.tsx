@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useUserContext } from '../context/UserContext';
-import { AnswerOptions } from '../components/quiz';
+// import { AnswerOptions } from '../components/quiz';
 
 export interface QuizQuestion {
     id: number;
     question: string;
-    answers: AnswerOptions[];
+    answers: any[];
     correct_answer: string;
 }
 
@@ -35,16 +35,22 @@ export function useAxiosQuizData() {
                 }
 
                 console.log("response====", response)
+                console.log("response?.data.result====", response?.data.results)
 
-                const questionss = response?.data.map((item: any) => ({
-                    id: item.id,
+                const questions = response?.data.results.map((item: any, index: number) => ({
+                    id: index+1,
                     question: item.question,
+                    // answers: [
+                    // item.answers
+                    // ],
                     answers: [
-                    item.answers
-                    ],
+                        ...item.incorrect_answers,
+                        item.correct_answer
+                    ].sort(() => Math.random() - 0.5),
                     correct_answer: item.correct_answer
                 }))
-                setData(questionss);
+                console.log("questions", questions)
+                setData(questions);
                 setError(null);
             } catch (error: any) {
                 setError(`Failed to fetch quiz data: ${error.message}`);
