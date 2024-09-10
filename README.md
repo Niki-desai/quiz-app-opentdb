@@ -1,3 +1,16 @@
+// # TRIVIA APP #
+
+- Used Formik and Yup for form validation**
+- No form of console or warning is shown
+- Tailwind CSS for styling used
+- Typescript is used along with modularization
+- As per instructions - one question and respective options are shown -> answers are displayed on submit for each question -> once 10 questions are done result is shown
+- Tried using Jest Library for writing test cases(Don't have much experience with this)
+- Faced issue in catching API error, tried using Error Boundaries - As limit is exceeded for API call - so kindly try a few times or after a few minutes
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
