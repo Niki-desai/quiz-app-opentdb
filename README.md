@@ -1,4 +1,4 @@
-// # TRIVIA APP #
+# Trivia App - kindly go through below points
 
 - Used Formik and Yup for form validation**
 - No form of console or warning is shown
