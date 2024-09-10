@@ -2,6 +2,7 @@
 
 - Used Formik and Yup for form validation**
 - Website is responsive
+- Context API is used to manage state
 - No form of console or warning is shown
 - Tailwind CSS for styling used
 - Typescript is used along with modularization
