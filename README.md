@@ -1,6 +1,7 @@
 # Trivia App - kindly go through below points
 
 - Used Formik and Yup for form validation**
+- Website is responsive
 - No form of console or warning is shown
 - Tailwind CSS for styling used
 - Typescript is used along with modularization
