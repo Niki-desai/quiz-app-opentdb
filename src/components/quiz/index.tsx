@@ -1,56 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAxiosQuizData } from '../../axios/useAxiosQuizData';
 import { useUserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Loading from './Loading';
-
-
-// export type AnswerOptions = {
-//   answer_a: string | null;
-//   answer_b: string | null;
-//   answer_c: string | null;
-//   answer_d?: string | null;
-//   answer_e?: string | null;
-//   answer_f?: string | null;
-// };
-
-type Question = {
-  id: number;
-  question: string;
-  answers: any[];
-  correct_answer: string;
-};
-
+import { ErrorFallback } from '../ErrorBoundary';
+import Feedback from './Feedback';
+import Question from './Question';
+import QuizButton from './QuizButton';
 
 const Quiz = () => {
+  const { dispatch } = useUserContext();
+  const { state } = useUserContext();
+  const navigate = useNavigate();
+  const { data, error, loading } = useAxiosQuizData();
+  const [feedback, setFeedback] = useState<string>('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<string>('');
-  const { dispatch } = useUserContext();
   const [hasAnswered, setHasAnswered] = useState<boolean>(false);
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
 
-  const [pendingAnswer, setPendingAnswer] = useState<string | null>(null);
-  const { state } = useUserContext();
-
-  const { data, error, loading } = useAxiosQuizData();
-  // const API_URL = process.env.REACT_APP_API_URL;
   const currentQuestion = data?.[currentQuestionIndex];
-  console.log("data", data)
 
-
-  const navigate = useNavigate();
+  // early return
   if (loading) return <Loading />;
-  if (error) return <p>{error}</p>;
+  if (error) return <ErrorFallback error={error} resetErrorBoundary={() => window.location.reload()} />;
   if (!data) return <p>No data available</p>;
-  // if(data){ setDatas(data)}
-
 
   const handleNext = () => {
     if (currentQuestionIndex < data.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(null);
-      setPendingAnswer(null);
       setFeedback('');
       setHasAnswered(false);
       setHasSubmitted(false);
@@ -58,22 +37,19 @@ const Quiz = () => {
   };
 
   const handleViewResult = () => {
-    navigate('/result'); // Adjust the path if needed
+    navigate('/result');
   };
 
   const handleAnswerClick = (answer: string) => {
     if (hasAnswered || hasSubmitted) return;
     setSelectedAnswer(answer);
     setFeedback('');
-    setPendingAnswer(answer);
     if (currentQuestion?.correct_answer === null) {
-      setFeedback("There is no answer for this question")
-      return
+      setFeedback("There is no answer for this question");
     }
   };
 
   const handleQuit = () => {
-    // Clear user data and reset the quiz
     dispatch({ type: 'RESET' });
     navigate('/');
   };
@@ -98,12 +74,9 @@ const Quiz = () => {
     setHasSubmitted(true);
   };
 
-
-
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-pink-100 p-6">
-
+      <h1 className="text-xl font-bold m-9 text-purple-600 text-center">Question {currentQuestionIndex + 1} of 10</h1>
       <div className="flex items-center justify-between w-full max-w-lg mb-4">
         <p className="text-purple-500 text-2xl font-semibold italic">
           Your Current Score !!🫡
@@ -120,88 +93,26 @@ const Quiz = () => {
           Quit
         </button>
       </div>
-      <div className="bg-white p-8 rounded-lg shadow-xl shadow-pink-400 w-full max-w-lg" >
+      <div className="bg-white p-8 rounded-lg shadow-xl shadow-pink-400 w-full max-w-lg">
         <h1 className="text-2xl font-bold text-purple-600 mb-4 text-center">Quiz Questions</h1>
-        <h1 className="text-2xl font-bold text-purple-600 mb-4 text-center">Question {currentQuestionIndex + 1} of 10</h1>
-
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">{currentQuestion?.question}</h2>
-          <ul className="space-y-2">
-            {/* {Object.keys(currentQuestion?.answers[0] || {}).map((key) => {
-              const answerKey = key as keyof AnswerOptions;
-              const answer = currentQuestion?.answers[0][answerKey];
-              let answerClass = 'p-4 rounded-lg cursor-pointer transition-colors shadow-md hover:bg-purple-50';
-
-              if (hasSubmitted) {
-                if (answerKey === currentQuestion?.correct_answer) {
-                  answerClass += ' bg-green-200 border-2 border-green-600 text-green-800'; // Correct answer in green
-                }
-
-                if (answerKey === selectedAnswer && answerKey !== currentQuestion?.correct_answer) {
-                  answerClass += ' bg-red-200 border-2 border-red-600 text-red-800';
-                }
-              } else if (answerKey === selectedAnswer) {
-                answerClass += ' bg-purple-200 border-2 border-purple-600 text-purple-800'; // Selected answer before submission
-              } else {
-                answerClass += ' bg-white hover:bg-purple-50'; // Default state
-              }
-              return (
-                answer && (
-                  <li
-                    key={answerKey}
-                    onClick={() => handleAnswerClick(answerKey)}
-                    className={answerClass}
-                  >
-                    {answer}
-                  </li>
-                )
-              );
-            })} */}
-            {currentQuestion?.answers.map((answer, index) => {
-              let answerClass = 'p-4 rounded-lg cursor-pointer transition-colors shadow-md hover:bg-purple-50';
-
-              if (hasSubmitted) {
-                if (answer === currentQuestion?.correct_answer) {
-                  answerClass += ' bg-green-200 border-2 border-green-600 text-green-800'; // Correct answer in green
-                }
-
-                if (answer === selectedAnswer && answer !== currentQuestion?.correct_answer) {
-                  answerClass += ' bg-red-200 border-2 border-red-600 text-red-800'; // Incorrect answer in red
-                }
-              } else if (answer === selectedAnswer) {
-                answerClass += ' bg-purple-200 border-2 border-purple-600 text-purple-800'; // Selected answer before submission
-              } else {
-                answerClass += ' bg-white hover:bg-purple-50'; // Default state
-              }
-              return (
-                <li
-                  key={index}
-                  onClick={() => handleAnswerClick(answer)}
-                  className={answerClass}
-                >
-                  {answer}
-                </li>
-              );
-            })}
-          </ul>
-
-        </div>
+        {currentQuestion && (
+          <Question
+            questionText={currentQuestion.question}
+            answers={currentQuestion.answers}
+            selectedAnswer={selectedAnswer}
+            hasSubmitted={hasSubmitted}
+            correctAnswer={currentQuestion.correct_answer}
+            onAnswerClick={handleAnswerClick}
+          />
+        )}
         <div className="text-center mb-6">
-          {feedback && (
-            <p className={`text-lg font-semibold ${feedback.startsWith('Wrong') || feedback.startsWith('There') ? 'text-red-600' : feedback.startsWith('Answer') ? 'text-green-600' : 'text-purple-600'}`}>
-              {feedback}
-            </p>
-          )}
+          <Feedback message={feedback} />
         </div>
-        <button
+        <QuizButton
           onClick={hasSubmitted ? (currentQuestionIndex < data.length - 1 ? handleNext : handleViewResult) : handleSubmit}
-          // onClick={hasSubmitted ? handleNext : handleSubmit}
           disabled={!selectedAnswer && !hasSubmitted}
-          className={`bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-purple-700 transition-colors ${(!selectedAnswer && !hasSubmitted) ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          {(currentQuestionIndex < data.length - 1 && hasSubmitted) ? 'Next' : (currentQuestionIndex == data.length - 1 && hasSubmitted) ? 'View Result' : 'Submit'}
-        </button>
-
+          label={(currentQuestionIndex < data.length - 1 && hasSubmitted) ? 'Next' : (currentQuestionIndex === data.length - 1 && hasSubmitted) ? 'View Result' : 'Submit'}
+        />
       </div>
     </div>
   );

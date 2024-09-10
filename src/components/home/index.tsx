@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import BasicDetails from './BasicDetails'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserContext } from '../../context/UserContext';
@@ -6,11 +6,11 @@ import { useUserContext } from '../../context/UserContext';
 const Home = () => {
     const [isFormFilled, setIsFormFilled] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
     const { dispatch } = useUserContext();
 
 
     useEffect(() => {
+        // whenever player come to home page, data is reset
       dispatch({ type: 'RESET' });
         if (!isFormFilled) {
             navigate('/', { replace: true });
@@ -19,7 +19,6 @@ const Home = () => {
 
 
     const handleFormSubmit = () => {
-        // Update state when the form is filled out
         setIsFormFilled(true);
     };
 

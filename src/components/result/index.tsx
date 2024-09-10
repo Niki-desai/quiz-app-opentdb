@@ -1,21 +1,11 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../../context/UserContext';
+import { getCongratulatoryMessage } from '../../utils/constants';
 
 const Result = () => {
   const { state, dispatch } = useUserContext();
   const navigate = useNavigate();
-
   const { quizScore } = state;
-
-  // Define message based on score
-  const getCongratulatoryMessage = (score: number) => {
-    if (score < 5) {
-      return "No worries, at least you tried!";
-    } else {
-      return "Keep trying, you're doing so good! 🎊🎊";
-    }
-  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-pink-300 to-black-500 p-6">

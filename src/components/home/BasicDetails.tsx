@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useUserContext } from '../../context/UserContext';
 import { useNavigate } from 'react-router';
+import { difficultyOptions } from '../../utils/constants';
 
 interface BasicDetailsProps {
     onFormSubmit: () => void;
@@ -24,18 +25,11 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ onFormSubmit }) => {
             <Formik
                 initialValues={{ name: '', difficulty: '' }}
                 validationSchema={validationSchema}
-                // onSubmit={(values) => {
-
-                //     dispatch({ type: 'SET_USER', payload: values })
-                //     onFormSubmit()
-                //     navigate('/quiz')
-                // }}
-            onSubmit={(values) => {
-                // console.log("values", values);
-                dispatch({ type: 'SET_USER', payload: values })
-                onFormSubmit()
-                navigate('/quiz')
-            }}
+                onSubmit={(values) => {
+                    dispatch({ type: 'SET_USER', payload: values })
+                    onFormSubmit()
+                    navigate('/quiz')
+                }}
             >
                 {() => (
                     <Form className="bg-gradient-to-r from-purple-300 to-purple-100  p-6 md:px-10 md:py-9  lg:py-10 lg:px-12 rounded-lg shadow-lg shadow-purple-700 w-full max-w-md h-50">
@@ -58,12 +52,13 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ onFormSubmit }) => {
                                 as="select"
                                 id="difficulty"
                                 name="difficulty"
-                                className="mt-1 block w-full p-2 border border-2 text-purple-800 font-semibold  border-purple-300 rounded-md"
+                                className="mt-1 block w-full p-2 border-2 text-purple-800 font-semibold  border-purple-300 rounded-md"
                             >
-                                <option value="">Select level</option>
-                                <option value="easy">Easy</option>
-                                <option value="medium">Medium</option>
-                                <option value="hard">Hard</option>
+                                {difficultyOptions.map(option => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
                             </Field>
                             <ErrorMessage name="difficulty" component="div" className="text-red-600 text-base mt-1" />
                         </div>
@@ -71,7 +66,6 @@ const BasicDetails: React.FC<BasicDetailsProps> = ({ onFormSubmit }) => {
                         <button
                             type="submit"
                             className="w-full text-lg  bg-gradient-to-r from-pink-500 via-purple-500 to-black text-white p-2 rounded-lg hover:p-2 hover:text-xl "
-                            
                         >
                             Start Quiz
                         </button>
